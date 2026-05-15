@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-store, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Chess Table</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="./styles.css?v=share-game-3" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="game-area" aria-label="Chess game">
+        <div class="top-bar">
+          <div>
+            <p class="eyebrow">Local match</p>
+            <h1>Chess Table</h1>
+          </div>
+          <div class="status-stack">
+            <span id="turnBadge" class="turn-badge">White to move</span>
+            <span id="gameState" class="game-state">Opening position</span>
+          </div>
+        </div>
+
+        <div id="reviewTopBar" class="review-top-bar" aria-live="polite">
+          <div>
+            <span id="topReviewMoveLabel" class="review-move-label">Move</span>
+            <p id="topReviewReason">Select a move to review it.</p>
+          </div>
+          <div class="review-controls top-review-controls">
+            <button id="topReviewPrevBtn" type="button">Prev</button>
+            <button id="topReviewNextBtn" type="button">Next</button>
+          </div>
+        </div>
+
+        <div class="board-stage">
+          <div class="board-hud">
+            <div id="botCard" class="bot-card board-bot-card" aria-live="polite">
+              <span id="botAvatar" class="bot-avatar" aria-hidden="true">
+                <span class="avatar-head"></span>
+                <span class="avatar-hair"></span>
+                <span class="avatar-shirt"></span>
+              </span>
+              <div>
+                <span id="botElo" class="bot-elo">~1300 Elo</span>
+                <strong id="botName">Cal</strong>
+              </div>
+              <p id="botStyle">Steady club chess with a little tactical bite.</p>
+              <p id="botChatter" class="bot-chatter">Cal is ready when you are.</p>
+            </div>
+          </div>
+          <div class="clock-stack">
+            <div id="blackClock" class="clock-card">
+              <span>Black</span>
+              <strong>5:00</strong>
+            </div>
+            <div id="whiteClock" class="clock-card active">
+              <span>White</span>
+              <strong>5:00</strong>
+            </div>
+          </div>
+          <div class="eval-bar" aria-label="Position evaluation">
+            <div id="blackEvalFill" class="eval-fill"></div>
+            <span id="evalScore" class="eval-score">0.0</span>
+          </div>
+          <div class="board-wrap">
+            <div id="board" class="board" aria-label="Chess board"></div>
+            <svg id="bestMoveArrow" class="best-move-arrow" aria-hidden="true" viewBox="0 0 100 100">
+              <defs>
+                <marker
+                  id="arrowHead"
+                  markerHeight="4"
+                  markerUnits="userSpaceOnUse"
+                  markerWidth="4"
+                  orient="auto"
+                  refX="3.3"
+                  refY="2"
+                >
+                  <path d="M0,0 L4,2 L0,4 Z"></path>
+                </marker>
+              </defs>
+              <line id="bestMoveLine" x1="0" y1="0" x2="0" y2="0"></line>
+            </svg>
+            <div id="moveSlideLayer" class="move-slide-layer" aria-hidden="true"></div>
+            <div id="reviewMoveEffect" class="review-move-effect" aria-hidden="true"></div>
+          </div>
+          <div id="moveFeedback" class="move-feedback board-feedback" aria-live="polite">Ready.</div>
+          <div id="boardReviewBar" class="board-review-bar">
+            <div>
+              <span id="boardReviewMoveLabel" class="review-move-label">Move</span>
+              <p id="boardReviewReason">Select a move to review it.</p>
+            </div>
+            <div class="review-controls board-review-controls">
+              <button id="boardReviewPrevBtn" type="button">Prev</button>
+              <button id="boardReviewNextBtn" type="button">Next</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side-panel" aria-label="Game controls">
+        <div class="panel-section controls-section">
+          <div class="controls-heading">
+            <h2>Controls</h2>
+            <button id="soundBtn" class="sound-toggle" type="button" aria-pressed="false" title="Sound">
+              <span aria-hidden="true">&#9834;</span>
+              Mute
+            </button>
+          </div>
+          <div class="play-actions">
+            <button id="newGameBtn" type="button">
+              <span aria-hidden="true">&#8635;</span>
+              New
+            </button>
+            <button id="undoBtn" type="button" title="Undo">
+              <span aria-hidden="true">&#8630;</span>
+              Undo
+            </button>
+            <button id="hintBtn" type="button" aria-pressed="false" title="Hint">
+              <span aria-hidden="true">&#10140;</span>
+              Hint
+            </button>
+            <button id="flipBtn" type="button">
+              <span aria-hidden="true">&#8645;</span>
+              Flip
+            </button>
+            <button id="resignBtn" type="button">
+              <span aria-hidden="true">&times;</span>
+              Resign
+            </button>
+            <button id="drawBtn" type="button">
+              <span aria-hidden="true">=</span>
+              Draw
+            </button>
+          </div>
+        </div>
+
+        <details class="panel-section settings-section">
+          <summary>Setup</summary>
+          <div class="field-grid">
+            <div class="field-stack">
+              <label for="modeSelect">Mode</label>
+              <select id="modeSelect">
+                <option value="human">Human vs Human</option>
+                <option value="white">Play White vs Computer</option>
+                <option value="black">Play Black vs Computer</option>
+                <option value="random">Random Side vs Computer</option>
+              </select>
+            </div>
+            <div class="field-stack">
+              <label for="difficultySelect">Difficulty</label>
+              <select id="difficultySelect">
+                <option value="veryEasy">Milo, New to the Board ~300 Elo</option>
+                <option value="easy">Nora, Cafe Player ~800 Elo</option>
+                <option value="medium" selected>Cal, Club Regular ~1300 Elo</option>
+                <option value="hard">Iris, Tactics Hunter ~1800 Elo</option>
+                <option value="expert">Vega, Engine Room ~2300 Elo</option>
+              </select>
+            </div>
+            <div class="field-stack">
+              <label for="clockSelect">Clock</label>
+              <select id="clockSelect">
+                <option value="none">No clock</option>
+                <option value="60+0">1+0 Bullet</option>
+                <option value="180+2">3+2 Blitz</option>
+                <option value="300+0" selected>5+0 Blitz</option>
+                <option value="600+0">10+0 Rapid</option>
+              </select>
+            </div>
+            <div class="field-stack">
+              <label for="volumeSelect">Volume</label>
+              <select id="volumeSelect">
+                <option value="0.35">Normal</option>
+                <option value="0.65" selected>Loud</option>
+                <option value="1">Max</option>
+              </select>
+            </div>
+          </div>
+        </details>
+
+        <details class="panel-section" open>
+          <summary>Captured</summary>
+          <div class="captures">
+            <div>
+              <div class="capture-header">
+                <span class="capture-label">White took</span>
+                <span id="whiteMaterialAdvantage" class="material-advantage">Even</span>
+              </div>
+              <div id="whiteCaptures" class="capture-line" aria-label="Pieces captured by white"></div>
+            </div>
+            <div>
+              <div class="capture-header">
+                <span class="capture-label">Black took</span>
+                <span id="blackMaterialAdvantage" class="material-advantage">Even</span>
+              </div>
+              <div id="blackCaptures" class="capture-line" aria-label="Pieces captured by black"></div>
+            </div>
+          </div>
+        </details>
+
+        <details class="panel-section moves-section" open>
+          <summary>
+            <span>Moves</span>
+            <span id="moveCount">0</span>
+          </summary>
+          <ol id="moveList" class="move-list" aria-label="Move history"></ol>
+        </details>
+
+        <details class="panel-section review-section">
+          <summary>
+            <span>Review</span>
+          </summary>
+          <div id="reviewSummary" class="review-summary">Finish the game to review your moves.</div>
+          <button id="reviewBtn" class="review-btn" type="button" disabled>Show Board Review</button>
+          <div id="reviewReplay" class="review-replay side-review-replay" hidden>
+            <div>
+              <span id="reviewMoveLabel" class="review-move-label">Move</span>
+              <p id="reviewReason">Select a move to review it.</p>
+            </div>
+            <div class="review-controls">
+              <button id="reviewPrevBtn" type="button">Prev</button>
+              <button id="reviewNextBtn" type="button">Next</button>
+            </div>
+          </div>
+          <ol id="reviewList" class="review-list" aria-label="Move review"></ol>
+        </details>
+      </aside>
+    </main>
+
+    <div id="reviewDock" class="review-dock" aria-live="polite">
+      <div>
+        <span id="dockReviewMoveLabel" class="review-move-label">Move</span>
+        <p id="dockReviewReason">Select a move to review it.</p>
+      </div>
+      <div class="review-controls dock-review-controls">
+        <button id="dockReviewPrevBtn" type="button">Prev</button>
+        <button id="dockReviewNextBtn" type="button">Next</button>
+      </div>
+    </div>
+
+    <dialog id="promotionDialog" class="promotion-dialog" aria-labelledby="promotionTitle">
+      <h2 id="promotionTitle">Promote pawn</h2>
+      <div class="promotion-grid">
+        <button type="button" data-piece="q">&#9813;</button>
+        <button type="button" data-piece="r">&#9814;</button>
+        <button type="button" data-piece="b">&#9815;</button>
+        <button type="button" data-piece="n">&#9816;</button>
+      </div>
+    </dialog>
+
+    <dialog id="gameOverDialog" class="game-over-dialog" aria-labelledby="gameOverTitle">
+      <div class="game-over-head">
+        <span id="gameOverBadge" class="game-over-badge">Game Over</span>
+        <h2 id="gameOverTitle">Checkmate</h2>
+        <p id="gameOverText">Black wins.</p>
+      </div>
+      <div class="result-stats" aria-label="Game summary">
+        <div>
+          <span>White</span>
+          <strong id="whiteAccuracy">--</strong>
+          <small>Accuracy</small>
+        </div>
+        <div>
+          <span>Black</span>
+          <strong id="blackAccuracy">--</strong>
+          <small>Accuracy</small>
+        </div>
+        <div>
+          <span>Key Moment</span>
+          <strong id="keyMoment">Review ready</strong>
+        </div>
+      </div>
+      <div class="postgame-moments" aria-label="Post-game moments">
+        <div>
+          <span>Best Move</span>
+          <strong id="bestMoveMoment">--</strong>
+        </div>
+        <div>
+          <span>Toughest Move</span>
+          <strong id="worstMoveMoment">--</strong>
+        </div>
+      </div>
+      <p id="gameOverNote" class="game-over-note">Review the game to see the turning point.</p>
+      <div class="dialog-actions">
+        <button id="dialogReviewBtn" type="button">Review Game</button>
+        <button id="dialogShareBtn" type="button">Share Game</button>
+        <button id="dialogNewGameBtn" type="button">New Game</button>
+        <button id="dialogCloseBtn" type="button">Close</button>
+      </div>
+    </dialog>
+
+    <script type="module" src="./src/app.js?v=share-game-3"></script>
+  </body>
+</html>
