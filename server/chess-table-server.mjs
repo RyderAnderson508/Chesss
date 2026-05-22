@@ -1,11 +1,13 @@
 import { createHash, randomBytes, randomUUID } from "node:crypto";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import http from "node:http";
+import { tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const port = Number(process.env.PORT || 8787);
-const dataDir = path.resolve("server-data");
+const isServerlessRuntime = Boolean(process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME);
+const dataDir = isServerlessRuntime ? path.join(tmpdir(), "chess-table-data") : path.resolve("server-data");
 const dataPath = path.join(dataDir, "chess-table.json");
 const blobStoreName = "chess-table";
 const blobDataKey = "data.json";
@@ -54,7 +56,7 @@ async function ensureDataLoaded() {
 }
 
 async function getBlobStore() {
-  if (!process.env.NETLIFY) return null;
+  if (!isServerlessRuntime) return null;
   if (!blobStorePromise) {
     blobStorePromise = import("@netlify/blobs")
       .then(({ getStore }) => getStore(blobStoreName))
@@ -307,15 +309,24 @@ function makeRoomCode() {
 }
 
 export async function handleRequest(request, response) {
-  await ensureDataLoaded();
-
-  if (request.method === "OPTIONS") {
-    sendJson(response, 200, { ok: true });
-    return;
-  }
-
   try {
+    await ensureDataLoaded();
+
+    if (request.method === "OPTIONS") {
+      sendJson(response, 200, { ok: true });
+      return;
+    }
+
     const url = new URL(request.url, `http://${request.headers.host}`);
+
+    if (request.method === "GET" && url.pathname === "/api/health") {
+      sendJson(response, 200, {
+        ok: true,
+        runtime: isServerlessRuntime ? "serverless" : "local",
+        users: Object.keys(data.users).length,
+      });
+      return;
+    }
 
     if (request.method === "POST" && url.pathname === "/api/signup") {
       const { username, password, recoveryAnswer } = await readJson(request);

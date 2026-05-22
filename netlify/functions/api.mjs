@@ -47,6 +47,17 @@ export async function handler(event) {
   return new Promise((resolve) => {
     const request = makeNodeLikeRequest(event);
     const response = makeNodeLikeResponse(resolve);
-    handleRequest(request, response);
+    handleRequest(request, response).catch((error) => {
+      resolve({
+        body: JSON.stringify({ error: error.message || "Account function crashed." }),
+        headers: {
+          "Access-Control-Allow-Headers": "authorization, content-type",
+          "Access-Control-Allow-Methods": "DELETE, GET, PATCH, POST, OPTIONS",
+          "Access-Control-Allow-Origin": "*",
+          "Content-Type": "application/json",
+        },
+        statusCode: 500,
+      });
+    });
   });
 }
