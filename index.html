@@ -1,0 +1,843 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Cache-Control" content="no-store, max-age=0" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+    <title>Chess Table</title>
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" />
+    <link rel="stylesheet" href="./styles.css?v=posting-polish-1" />
+  </head>
+  <body>
+    <section id="authScreen" class="auth-screen" aria-labelledby="authTitle">
+      <div class="auth-card">
+        <div class="start-copy">
+          <p class="eyebrow">Chess Table Account</p>
+          <h1 id="authTitle">Sign in to play</h1>
+          <p>Create an account to play games, save stats, track puzzles, and use online friend matches.</p>
+        </div>
+        <p id="authStatus" class="online-status">Log in or create an account to continue.</p>
+        <div class="auth-fields">
+          <label class="online-code-field">
+            <span>Username</span>
+            <input id="authUsername" type="text" autocomplete="username" maxlength="24" />
+          </label>
+          <label class="online-code-field">
+            <span>Password</span>
+            <div class="password-field">
+              <input id="authPassword" type="password" autocomplete="current-password" />
+              <button id="authTogglePassword" type="button">Show</button>
+            </div>
+          </label>
+          <label class="online-code-field">
+            <span>Favorite pet name for signup/recovery</span>
+            <input id="authRecoveryAnswer" type="text" autocomplete="off" maxlength="40" />
+          </label>
+        </div>
+        <div class="online-actions auth-actions">
+          <button id="authLoginBtn" type="button">Log In</button>
+          <button id="authSignupBtn" type="button">Sign Up</button>
+        </div>
+        <button id="forgotPasswordToggle" class="link-button" type="button">Forgot password?</button>
+        <div id="forgotPasswordPanel" class="forgot-panel" hidden>
+          <p class="recovery-help">
+            No email is linked to Chess Table accounts. Use the favorite pet name you added when you signed up, or set a
+            new recovery answer from Profile while signed in.
+          </p>
+          <label class="online-code-field">
+            <span>Username</span>
+            <input id="forgotUsername" type="text" maxlength="24" />
+          </label>
+          <label class="online-code-field">
+            <span>Favorite pet name</span>
+            <input id="forgotRecoveryAnswer" type="text" autocomplete="off" maxlength="40" spellcheck="false" />
+          </label>
+          <label class="online-code-field">
+            <span>New password</span>
+            <div class="password-field">
+              <input id="forgotPassword" type="password" autocomplete="new-password" />
+              <button id="forgotTogglePassword" type="button">Show</button>
+            </div>
+          </label>
+          <button id="forgotResetBtn" type="button">Reset Password</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="startScreen" class="start-screen" aria-labelledby="startTitle">
+      <div class="start-card">
+        <div class="start-copy">
+          <p class="eyebrow">Local match</p>
+          <h1 id="startTitle">Chess Table</h1>
+          <p>Pick your opponent, choose your side, and sit down at the board.</p>
+        </div>
+
+        <div class="start-layout">
+          <div id="startBotPreview" class="start-bot-preview">
+            <span id="startBotAvatar" class="bot-avatar" aria-hidden="true">
+              <span class="avatar-head"></span>
+              <span class="avatar-hair"></span>
+              <span class="avatar-shirt"></span>
+            </span>
+            <div>
+              <span id="startBotElo" class="bot-elo">~1300 Elo</span>
+              <strong id="startBotName">Cal</strong>
+              <p id="startBotStyle">Steady club chess with a little tactical bite.</p>
+            </div>
+          </div>
+
+          <div class="start-fields">
+            <label for="startModeSelect">
+              <span>Mode</span>
+              <select id="startModeSelect">
+                <option value="white">Play White vs Computer</option>
+                <option value="black">Play Black vs Computer</option>
+                <option value="random">Random Side vs Computer</option>
+                <option value="human">Human vs Human</option>
+                <option value="online">Online Friend Match</option>
+              </select>
+            </label>
+            <label id="startBotField" for="startDifficultySelect">
+              <span>Bot</span>
+              <select id="startDifficultySelect">
+                <option value="veryEasy">Milo, New to the Board ~300 Elo</option>
+                <option value="rookie">Pip, Careful Rookie ~500 Elo</option>
+                <option value="easy">Nora, Cafe Player ~800 Elo</option>
+                <option value="learner">Theo, Weekend Player ~1000 Elo</option>
+                <option value="medium">Cal, Club Regular ~1300 Elo</option>
+                <option value="challenger">Rowan, League Player ~1500 Elo</option>
+                <option value="hard">Iris, Tactics Hunter ~1800 Elo</option>
+                <option value="advanced">Sable, Tournament Player ~2000 Elo</option>
+                <option value="expert">Vega, Engine Room ~2300 Elo</option>
+                <option value="master">Orion, Master Analyst ~2600 Elo</option>
+              </select>
+            </label>
+            <div id="startBotCards" class="bot-selection-cards" aria-label="Choose a bot"></div>
+            <label for="startClockSelect">
+              <span>Clock</span>
+              <select id="startClockSelect">
+                <option value="none">No clock</option>
+                <option value="60+0">1+0 Bullet</option>
+                <option value="180+2">3+2 Blitz</option>
+                <option value="300+0">5+0 Blitz</option>
+                <option value="600+0">10+0 Rapid</option>
+              </select>
+            </label>
+            <label for="startThemeSelect">
+              <span>Board Theme</span>
+              <select id="startThemeSelect">
+                <option value="green">Green</option>
+                <option value="brown">Brown</option>
+                <option value="blue">Blue</option>
+                <option value="dark">Dark</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="helper-toggles" aria-label="Helper options">
+          <label>
+            <input id="startCoachToggle" type="checkbox" checked />
+            <span>Coach Tips</span>
+          </label>
+          <label>
+            <input id="startOpeningToggle" type="checkbox" checked />
+            <span>Opening Card</span>
+          </label>
+        </div>
+
+        <button id="startGameBtn" class="start-game-btn" type="button">Start Game</button>
+      </div>
+    </section>
+
+    <main class="app-shell" data-active-tab="home">
+      <nav class="app-tabs" aria-label="Main navigation">
+        <button class="app-tab active" type="button" data-tab="home">Home</button>
+        <button class="app-tab" type="button" data-tab="play">Play</button>
+        <button class="app-tab" type="button" data-tab="puzzles">Puzzles</button>
+        <button class="app-tab" type="button" data-tab="learn">Learn</button>
+        <button class="app-tab" type="button" data-tab="friends">Friends</button>
+        <button class="app-tab" type="button" data-tab="profile">Profile</button>
+        <button class="app-tab" type="button" data-tab="settings">Settings</button>
+      </nav>
+
+      <section id="tabPanels" class="tab-panels" aria-label="App sections">
+        <section id="homeTab" class="tab-panel active" data-tab-panel="home" aria-label="Home dashboard">
+          <div class="platform-hero">
+            <div>
+              <p class="eyebrow">Chess platform</p>
+              <h1>Chess Table</h1>
+              <p>Play a match, train a tactic, check your friends, or keep building your stats.</p>
+            </div>
+            <div class="quick-actions">
+              <button id="homePlayBtn" type="button">Play Game</button>
+              <button id="homePuzzleBtn" type="button">Practice Puzzles</button>
+              <button id="homeFriendsBtn" type="button">Friends</button>
+            </div>
+          </div>
+
+          <article class="continue-card platform-card">
+            <span>Today</span>
+            <strong id="homeContinueTitle">Choose your next game</strong>
+            <p id="homeContinueText">Your saved setup, puzzle progress, and friend updates will appear here.</p>
+            <div id="homeContinueMeta" class="status-chip-row" aria-label="Current setup"></div>
+          </article>
+
+          <div class="dashboard-grid">
+            <article class="platform-card">
+              <span>Next Match</span>
+              <strong id="homeNextMatch">Cal · 5+0</strong>
+              <p>Jump back in with your saved setup or choose a new bot from Play.</p>
+            </article>
+            <article class="platform-card">
+              <span>Puzzle Streak</span>
+              <strong id="homePuzzleStreak">0</strong>
+              <p>Keep your tactic streak alive from the Puzzles tab.</p>
+            </article>
+            <article class="platform-card">
+              <span>Online</span>
+              <strong id="homeFriendStatus">Friends ready</strong>
+              <p>Search players, accept requests, and invite friends to a match.</p>
+            </article>
+          </div>
+
+          <div id="homeStatsGrid" class="home-stats-grid" aria-label="Recent stats"></div>
+        </section>
+
+        <section id="puzzlesTab" class="tab-panel" data-tab-panel="puzzles" aria-label="Puzzle training">
+          <div class="tab-header">
+            <div>
+              <p class="eyebrow">Training</p>
+              <h1>Puzzles</h1>
+              <p>Work through advanced game-like tactics with forcing lines, captures, and mating nets.</p>
+            </div>
+            <button id="puzzlesStartBtn" type="button">Start Puzzle Run</button>
+          </div>
+          <div class="dashboard-grid">
+            <article class="platform-card">
+              <span>Current Focus</span>
+              <strong>Harder Tactics</strong>
+              <p>Opening traps, sacrifices, multi-move mates, and forcing material wins.</p>
+            </article>
+            <article class="platform-card">
+              <span>Progress</span>
+              <strong id="puzzlesProgress">Ready</strong>
+              <p>Solved and failed counts save to your account when the backend is running.</p>
+            </article>
+            <article class="platform-card">
+              <span>Categories</span>
+              <strong>Mate · Fork · Pin</strong>
+              <p>Includes back-rank ideas, skewers, hanging pieces, and advanced sequences.</p>
+            </article>
+          </div>
+          <div id="puzzleCategoryProgress" class="platform-list" aria-label="Puzzle category progress"></div>
+        </section>
+
+        <section id="learnTab" class="tab-panel" data-tab-panel="learn" aria-label="Learn chess">
+          <div class="tab-header">
+            <div>
+              <p class="eyebrow">Openings</p>
+              <h1>Learn</h1>
+              <p>Pick an opening and study the moves, ideas, plans, and mistakes before playing it.</p>
+            </div>
+          </div>
+          <div class="lesson-grid">
+            <article class="platform-card">
+              <span>Openings</span>
+              <strong>Win the center first.</strong>
+              <p>Develop knights and bishops, castle early, and avoid moving the same piece too many times.</p>
+            </article>
+            <article class="platform-card">
+              <span>Tactics</span>
+              <strong>Look for forcing moves.</strong>
+              <p>Checks, captures, and threats are usually the first candidates to calculate.</p>
+            </article>
+            <article class="platform-card">
+              <span>Review</span>
+              <strong>One mistake at a time.</strong>
+              <p>After a game, replay the key moment and ask what changed in the position.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="friendsTab" class="tab-panel utility-panel" data-tab-panel="friends" aria-label="Friends">
+          <div class="tab-header">
+            <div>
+              <p class="eyebrow">Social</p>
+              <h1>Friends</h1>
+              <p>Use the friends panel to search users, manage requests, and start online games.</p>
+            </div>
+          </div>
+          <div id="friendsOverview" class="dashboard-grid" aria-label="Friend status overview"></div>
+          <div class="platform-list">
+            <article>
+              <span>Invite Flow</span>
+              <strong>Search, add, invite, play.</strong>
+              <p>Friend games show clearer waiting, joined, turn, and reconnecting states in the Online Friend panel.</p>
+            </article>
+            <article>
+              <span>Room Status</span>
+              <strong id="friendsRoomStatus">No active room</strong>
+              <p id="friendsRoomText">Create a room from a friend card or paste a short room code.</p>
+            </article>
+          </div>
+        </section>
+
+        <section id="profileTab" class="tab-panel utility-panel" data-tab-panel="profile" aria-label="Profile">
+          <div class="tab-header">
+            <div>
+              <p class="eyebrow">Account</p>
+              <h1>Profile</h1>
+              <p>Edit your name, avatar, password, recovery answer, and saved stats from the profile panel.</p>
+            </div>
+          </div>
+          <div id="profileOverview" class="dashboard-grid" aria-label="Profile overview"></div>
+        </section>
+
+        <section id="settingsTab" class="tab-panel utility-panel" data-tab-panel="settings" aria-label="Settings">
+          <div class="tab-header">
+            <div>
+              <p class="eyebrow">Preferences</p>
+              <h1>Settings</h1>
+              <p>Theme, pieces, sound, coach tips, opening cards, mode, bot, and clock live here.</p>
+            </div>
+          </div>
+          <div id="settingsOverview" class="dashboard-grid" aria-label="Settings overview"></div>
+        </section>
+      </section>
+
+      <section class="game-area" aria-label="Chess game">
+        <div class="top-bar">
+          <div>
+            <p class="eyebrow">Local match</p>
+            <h1>Chess Table</h1>
+          </div>
+          <div class="status-stack">
+            <span id="turnBadge" class="turn-badge">White to move</span>
+            <span id="gameState" class="game-state">Opening position</span>
+          </div>
+        </div>
+
+        <div id="playContextStrip" class="play-context-strip" aria-label="Current play setup"></div>
+
+        <div id="reviewTopBar" class="review-top-bar" aria-live="polite">
+          <div>
+            <span id="topReviewMoveLabel" class="review-move-label">Move</span>
+            <p id="topReviewReason">Select a move to review it.</p>
+          </div>
+          <div class="review-controls top-review-controls">
+            <button id="topReviewPrevBtn" type="button">Prev</button>
+            <button id="topReviewNextBtn" type="button">Next</button>
+          </div>
+        </div>
+
+        <div class="board-stage">
+          <div class="board-hud">
+            <div id="botCard" class="bot-card board-bot-card" aria-live="polite">
+              <span id="botAvatar" class="bot-avatar" aria-hidden="true">
+                <span class="avatar-head"></span>
+                <span class="avatar-hair"></span>
+                <span class="avatar-shirt"></span>
+              </span>
+              <div>
+                <span id="botElo" class="bot-elo">~1300 Elo</span>
+                <strong id="botName">Cal</strong>
+              </div>
+              <p id="botStyle">Steady club chess with a little tactical bite.</p>
+              <p id="botChatter" class="bot-chatter">Cal is ready when you are.</p>
+            </div>
+          </div>
+          <div class="clock-stack">
+            <div id="blackClock" class="clock-card">
+              <span>Black</span>
+              <strong>5:00</strong>
+            </div>
+            <div id="whiteClock" class="clock-card active">
+              <span>White</span>
+              <strong>5:00</strong>
+            </div>
+          </div>
+          <div class="eval-bar" aria-label="Position evaluation">
+            <div id="blackEvalFill" class="eval-fill"></div>
+            <span id="evalScore" class="eval-score">0.0</span>
+          </div>
+          <div class="board-wrap">
+            <div id="boardMaterialBar" class="board-material-bar" aria-live="polite">
+              <span id="whiteBoardMaterial">White even</span>
+              <span id="blackBoardMaterial">Black even</span>
+            </div>
+            <div id="board" class="board" aria-label="Chess board"></div>
+            <svg id="bestMoveArrow" class="best-move-arrow" aria-hidden="true" viewBox="0 0 100 100">
+              <defs>
+                <marker
+                  id="arrowHead"
+                  markerHeight="5"
+                  markerUnits="strokeWidth"
+                  markerWidth="5"
+                  orient="auto"
+                  refX="4.6"
+                  refY="2.5"
+                >
+                  <path d="M0,0 L5,2.5 L0,5 Z"></path>
+                </marker>
+              </defs>
+              <line id="bestMoveLine" x1="0" y1="0" x2="0" y2="0"></line>
+            </svg>
+            <svg id="premoveArrow" class="premove-arrow" aria-hidden="true" viewBox="0 0 100 100">
+              <defs>
+                <marker
+                  id="premoveArrowHead"
+                  markerHeight="4"
+                  markerUnits="strokeWidth"
+                  markerWidth="4"
+                  orient="auto"
+                  refX="3.7"
+                  refY="2"
+                >
+                  <path d="M0,0 L4,2 L0,4 Z"></path>
+                </marker>
+              </defs>
+              <line id="premoveLine" x1="0" y1="0" x2="0" y2="0"></line>
+            </svg>
+            <div id="moveSlideLayer" class="move-slide-layer" aria-hidden="true"></div>
+            <div id="reviewMoveEffect" class="review-move-effect" aria-hidden="true"></div>
+          </div>
+          <div id="moveFeedback" class="move-feedback board-feedback" aria-live="polite">Ready.</div>
+          <div id="puzzleToolbar" class="puzzle-toolbar" aria-label="Puzzle controls" hidden>
+            <button id="retryPuzzleBtn" type="button">Retry Puzzle</button>
+            <button id="nextPuzzleBtn" type="button">Next Puzzle</button>
+            <button id="reviewPuzzleBtn" type="button">Review Solution</button>
+            <button id="skipPuzzleBtn" type="button">Skip Puzzle</button>
+          </div>
+          <div id="openingCard" class="opening-card" aria-live="polite">
+            <span>Opening</span>
+            <strong id="openingCardName">Starting position</strong>
+            <p id="openingCardText">Make a move to reveal the opening family.</p>
+          </div>
+          <div id="coachCard" class="coach-card" aria-live="polite">
+            <span>Coach</span>
+            <p id="coachTip">Control the center, develop a piece, and keep your king safe.</p>
+          </div>
+          <div id="boardReviewBar" class="board-review-bar">
+            <div>
+              <span id="boardReviewMoveLabel" class="review-move-label">Move</span>
+              <p id="boardReviewReason">Select a move to review it.</p>
+            </div>
+            <div class="review-controls board-review-controls">
+              <button id="boardReviewRestartBtn" type="button">Restart</button>
+              <button id="boardReviewPrevBtn" type="button">Prev</button>
+              <button id="boardReviewNextBtn" type="button">Next</button>
+              <button id="boardReviewCloseBtn" type="button">Close</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="side-panel" aria-label="Game controls">
+        <div class="panel-section controls-section">
+          <div class="controls-heading">
+            <h2>Controls</h2>
+            <button id="soundBtn" class="sound-toggle" type="button" aria-pressed="false" title="Sound">
+              <span aria-hidden="true">&#9834;</span>
+              Mute
+            </button>
+          </div>
+          <div class="play-actions">
+            <button id="newGameBtn" type="button">
+              <span aria-hidden="true">&#8635;</span>
+              New
+            </button>
+            <button id="undoBtn" type="button" title="Undo">
+              <span aria-hidden="true">&#8630;</span>
+              Undo
+            </button>
+            <button id="hintBtn" type="button" aria-pressed="false" title="Hint">
+              <span aria-hidden="true">&#10140;</span>
+              Hint
+            </button>
+            <button id="flipBtn" type="button">
+              <span aria-hidden="true">&#8645;</span>
+              Flip
+            </button>
+            <button id="resignBtn" type="button">
+              <span aria-hidden="true">&times;</span>
+              Resign
+            </button>
+            <button id="drawBtn" type="button">
+              <span aria-hidden="true">=</span>
+              Draw
+            </button>
+            <button id="shareAppBtn" class="share-app-btn" type="button">
+              <span aria-hidden="true">&#8599;</span>
+              <span>Share App</span>
+            </button>
+          </div>
+        </div>
+
+        <details class="panel-section settings-section">
+          <summary>Setup</summary>
+          <div class="field-grid">
+            <div class="field-stack">
+              <label for="modeSelect">Mode</label>
+              <select id="modeSelect">
+                <option value="human">Human vs Human</option>
+                <option value="white" selected>Play White vs Computer</option>
+                <option value="black">Play Black vs Computer</option>
+                <option value="random">Random Side vs Computer</option>
+                <option value="online">Online Friend Match</option>
+                <option value="practice" hidden>Practice Puzzle</option>
+              </select>
+            </div>
+            <div class="field-stack">
+              <label for="difficultySelect">Difficulty</label>
+              <select id="difficultySelect">
+                <option value="veryEasy">Milo, New to the Board ~300 Elo</option>
+                <option value="rookie">Pip, Careful Rookie ~500 Elo</option>
+                <option value="easy">Nora, Cafe Player ~800 Elo</option>
+                <option value="learner">Theo, Weekend Player ~1000 Elo</option>
+                <option value="medium" selected>Cal, Club Regular ~1300 Elo</option>
+                <option value="challenger">Rowan, League Player ~1500 Elo</option>
+                <option value="hard">Iris, Tactics Hunter ~1800 Elo</option>
+                <option value="advanced">Sable, Tournament Player ~2000 Elo</option>
+                <option value="expert">Vega, Engine Room ~2300 Elo</option>
+                <option value="master">Orion, Master Analyst ~2600 Elo</option>
+              </select>
+            </div>
+            <div class="field-stack">
+              <label for="clockSelect">Clock</label>
+              <select id="clockSelect">
+                <option value="none">No clock</option>
+                <option value="60+0">1+0 Bullet</option>
+                <option value="180+2">3+2 Blitz</option>
+                <option value="300+0" selected>5+0 Blitz</option>
+                <option value="600+0">10+0 Rapid</option>
+              </select>
+            </div>
+            <div class="field-stack">
+              <label for="volumeSelect">Volume</label>
+              <select id="volumeSelect">
+                <option value="0.35">Normal</option>
+                <option value="0.65" selected>Loud</option>
+                <option value="1">Max</option>
+              </select>
+            </div>
+            <div class="field-stack">
+              <label for="themeSelect">Board Theme</label>
+              <select id="themeSelect">
+                <option value="green">Green</option>
+                <option value="brown">Brown</option>
+                <option value="blue">Blue</option>
+                <option value="dark">Dark</option>
+              </select>
+            </div>
+            <div class="field-stack">
+              <label for="pieceStyleSelect">Pieces</label>
+              <select id="pieceStyleSelect">
+                <option value="classic">Classic</option>
+                <option value="modern">Modern</option>
+                <option value="contrast">High Contrast</option>
+              </select>
+            </div>
+          </div>
+        </details>
+
+        <details id="accountSection" class="panel-section account-section" open>
+          <summary>Account</summary>
+          <p id="accountStatus" class="online-status">Sign in to save stats and play online.</p>
+          <div id="accountForm" class="account-form">
+            <label class="online-code-field">
+              <span>Username</span>
+              <input id="accountUsername" type="text" autocomplete="username" maxlength="24" />
+            </label>
+            <label class="online-code-field">
+              <span>Password</span>
+              <div class="password-field">
+                <input id="accountPassword" type="password" autocomplete="current-password" />
+                <button id="accountTogglePassword" type="button">Show</button>
+              </div>
+            </label>
+            <label class="online-code-field">
+              <span>Favorite pet name for signup/recovery</span>
+              <input id="accountRecoveryAnswer" type="text" autocomplete="off" maxlength="40" />
+            </label>
+            <div class="online-actions">
+              <button id="loginBtn" type="button">Log In</button>
+              <button id="signupBtn" type="button">Sign Up</button>
+            </div>
+          </div>
+          <div id="profilePanel" class="profile-panel" hidden>
+            <div id="recoveryNotice" class="recovery-notice" hidden></div>
+            <div class="profile-grid">
+              <label class="online-code-field">
+                <span>Display name</span>
+                <input id="profileDisplayName" type="text" maxlength="32" />
+              </label>
+              <label class="online-code-field">
+                <span>Username</span>
+                <input id="profileUsername" type="text" maxlength="24" />
+              </label>
+              <label class="online-code-field">
+                <span>Avatar</span>
+                <select id="profileAvatar">
+                  <option value="king">King</option>
+                  <option value="queen">Queen</option>
+                  <option value="knight">Knight</option>
+                  <option value="rook">Rook</option>
+                  <option value="bishop">Bishop</option>
+                </select>
+              </label>
+              <label class="online-code-field">
+                <span>Profile picture</span>
+                <input id="profilePicture" type="text" maxlength="1400000" placeholder="Paste image URL or choose a photo" />
+              </label>
+              <label class="online-code-field profile-upload-field">
+                <span>Choose from camera roll</span>
+                <input id="profilePictureFile" type="file" accept="image/png,image/jpeg,image/webp" />
+                <small id="profilePictureStatus">Photos are checked locally for type, size, dimensions, and unsafe filename terms.</small>
+              </label>
+              <label class="online-code-field">
+                <span>Favorite opening</span>
+                <input id="profileFavoriteOpening" type="text" maxlength="48" placeholder="Italian Game" />
+              </label>
+              <label class="online-code-field">
+                <span>Location</span>
+                <input id="profileLocation" type="text" maxlength="40" placeholder="Online" />
+              </label>
+            </div>
+            <label class="online-code-field">
+              <span>Bio</span>
+              <textarea id="profileBio" maxlength="160" rows="3" placeholder="Tell friends what kind of chess you like to play."></textarea>
+            </label>
+            <div class="online-actions">
+              <button id="saveProfileBtn" type="button">Save Profile</button>
+            </div>
+            <label class="online-code-field">
+              <span>New favorite pet name</span>
+              <input id="profileRecoveryAnswer" type="text" autocomplete="off" maxlength="40" />
+            </label>
+            <button id="newRecoveryCodeBtn" type="button">Save Recovery Answer</button>
+            <div class="profile-grid">
+              <label class="online-code-field">
+                <span>Current password</span>
+                <input id="currentPassword" type="password" autocomplete="current-password" />
+              </label>
+              <label class="online-code-field">
+                <span>New password</span>
+                <input id="newPassword" type="password" autocomplete="new-password" />
+              </label>
+            </div>
+            <div class="online-actions">
+              <button id="changePasswordBtn" type="button">Change Password</button>
+              <button id="profileResetStatsBtn" type="button">Reset Stats</button>
+            </div>
+            <button id="deleteAccountBtn" class="danger-btn" type="button">Delete Account</button>
+          </div>
+          <button id="logoutBtn" class="reset-stats-btn" type="button" hidden>Log Out</button>
+        </details>
+
+        <details id="friendsSection" class="panel-section friends-section">
+          <summary>Friends</summary>
+          <p id="friendsStatus" class="online-status">Search for friends, accept requests, and invite them to games.</p>
+          <label class="online-code-field">
+            <span>Find player</span>
+            <input id="friendSearchInput" type="text" maxlength="24" placeholder="Username" spellcheck="false" />
+          </label>
+          <div class="online-actions">
+            <button id="friendSearchBtn" type="button">Search</button>
+            <button id="friendsRefreshBtn" type="button">Refresh</button>
+          </div>
+          <div id="friendSearchResults" class="friend-list"></div>
+          <div class="friend-group">
+            <h3>Friends</h3>
+            <div id="friendsList" class="friend-list"></div>
+          </div>
+          <div class="friend-group">
+            <h3>Requests</h3>
+            <div id="friendRequestsList" class="friend-list"></div>
+          </div>
+          <div class="friend-group">
+            <h3>Game Invites</h3>
+            <div id="friendInvitesList" class="friend-list"></div>
+          </div>
+        </details>
+
+        <details id="onlineSection" class="panel-section online-section">
+          <summary>Online Friend</summary>
+          <p id="onlineStatus" class="online-status">Sign in, choose Online Friend Match, then invite a friend or use a room code.</p>
+          <div class="online-actions">
+            <button id="onlineHostBtn" type="button">Create Room</button>
+            <button id="onlineJoinBtn" type="button">Join Room</button>
+            <button id="onlineAcceptBtn" type="button">Refresh Room</button>
+            <button id="onlineCopyBtn" type="button">Copy Room Code</button>
+          </div>
+          <label class="online-code-field">
+            <span>Room code</span>
+            <input id="onlineInput" type="text" maxlength="8" spellcheck="false" />
+          </label>
+          <label class="online-code-field">
+            <span>Your room</span>
+            <input id="onlineOutput" type="text" readonly spellcheck="false" />
+          </label>
+        </details>
+
+        <details class="panel-section stats-section">
+          <summary>Stats</summary>
+          <div id="statsSummary" class="stats-summary">
+            <span>Games <strong>0</strong></span>
+            <span>Wins <strong>0</strong></span>
+            <span>Losses <strong>0</strong></span>
+            <span>Draws <strong>0</strong></span>
+            <span>Avg accuracy <strong>--</strong></span>
+          </div>
+          <button id="resetStatsBtn" class="reset-stats-btn" type="button">Reset Stats</button>
+        </details>
+
+        <details class="panel-section captured-section" open>
+          <summary>Captured</summary>
+          <div class="captures">
+            <div>
+              <div class="capture-header">
+                <span class="capture-label">White took</span>
+                <span id="whiteMaterialAdvantage" class="material-advantage">Even</span>
+              </div>
+              <div id="whiteCaptures" class="capture-line" aria-label="Pieces captured by white"></div>
+            </div>
+            <div>
+              <div class="capture-header">
+                <span class="capture-label">Black took</span>
+                <span id="blackMaterialAdvantage" class="material-advantage">Even</span>
+              </div>
+              <div id="blackCaptures" class="capture-line" aria-label="Pieces captured by black"></div>
+            </div>
+          </div>
+        </details>
+
+        <details class="panel-section moves-section" open>
+          <summary>
+            <span>Moves</span>
+            <span id="moveCount">0</span>
+          </summary>
+          <ol id="moveList" class="move-list" aria-label="Move history"></ol>
+          <button id="copyMovesBtn" class="copy-moves-btn" type="button">Copy Moves</button>
+        </details>
+
+        <details class="panel-section review-section">
+          <summary>
+            <span>Review</span>
+          </summary>
+          <div id="reviewSummary" class="review-summary">Finish the game to review your moves.</div>
+          <button id="reviewBtn" class="review-btn" type="button" disabled>Show Board Review</button>
+          <div id="reviewReplay" class="review-replay side-review-replay" hidden>
+            <div>
+              <span id="reviewMoveLabel" class="review-move-label">Move</span>
+              <p id="reviewReason">Select a move to review it.</p>
+            </div>
+            <div class="review-controls">
+              <button id="reviewPrevBtn" type="button">Prev</button>
+              <button id="reviewNextBtn" type="button">Next</button>
+            </div>
+          </div>
+          <ol id="reviewList" class="review-list" aria-label="Move review"></ol>
+        </details>
+      </aside>
+    </main>
+
+    <div id="reviewDock" class="review-dock" aria-live="polite">
+      <div>
+        <span id="dockReviewMoveLabel" class="review-move-label">Move</span>
+        <p id="dockReviewReason">Select a move to review it.</p>
+      </div>
+      <div class="review-controls dock-review-controls">
+        <button id="dockReviewPrevBtn" type="button">Prev</button>
+        <button id="dockReviewNextBtn" type="button">Next</button>
+      </div>
+    </div>
+
+    <dialog id="promotionDialog" class="promotion-dialog" aria-labelledby="promotionTitle">
+      <h2 id="promotionTitle">Promote pawn</h2>
+      <div class="promotion-grid">
+        <button type="button" data-piece="q">&#9813;</button>
+        <button type="button" data-piece="r">&#9814;</button>
+        <button type="button" data-piece="b">&#9815;</button>
+        <button type="button" data-piece="n">&#9816;</button>
+      </div>
+    </dialog>
+
+    <dialog id="gameOverDialog" class="game-over-dialog" aria-labelledby="gameOverTitle">
+      <div class="game-over-head">
+        <span id="gameOverBadge" class="game-over-badge">Game Over</span>
+        <h2 id="gameOverTitle">Checkmate</h2>
+        <p id="gameOverText"></p>
+      </div>
+      <div class="result-stats" aria-label="Game summary">
+        <div>
+          <span>White</span>
+          <strong id="whiteAccuracy">--</strong>
+          <small>Accuracy</small>
+        </div>
+        <div>
+          <span>Black</span>
+          <strong id="blackAccuracy">--</strong>
+          <small>Accuracy</small>
+        </div>
+        <div>
+          <span>Key Moment</span>
+          <strong id="keyMoment">Review ready</strong>
+        </div>
+      </div>
+      <div class="postgame-moments" aria-label="Post-game moments">
+        <div>
+          <span>Best Move</span>
+          <strong id="bestMoveMoment">--</strong>
+        </div>
+        <div>
+          <span>Toughest Move</span>
+          <strong id="worstMoveMoment">--</strong>
+        </div>
+      </div>
+      <div id="postgameNextSteps" class="postgame-next-steps" aria-label="What to learn next"></div>
+      <div class="postgame-share-card">
+        <span>Share Result</span>
+        <div class="postgame-share-visual" aria-label="Share card preview">
+          <strong id="shareVisualResult">Chess Table Result</strong>
+          <p id="shareVisualMeta">Opening, opponent, and move count will appear here.</p>
+          <div class="share-visual-stats">
+            <span id="shareVisualWhite">White --</span>
+            <span id="shareVisualBlack">Black --</span>
+            <span id="shareVisualMoment">Key moment --</span>
+          </div>
+        </div>
+        <code id="gameSharePreview">Finish a game to create a shareable result.</code>
+      </div>
+      <p id="gameOverNote" class="game-over-note" hidden></p>
+      <div class="dialog-actions">
+        <button id="dialogReviewBtn" type="button">Review Game</button>
+        <button id="dialogRetryMomentBtn" type="button">Retry Key Moment</button>
+        <button id="dialogRematchBtn" type="button">Rematch</button>
+        <button id="dialogChangeBotBtn" type="button">Change Bot</button>
+        <button id="dialogShareAppBtn" type="button">Share App</button>
+        <button id="dialogShareBtn" type="button">Share Game</button>
+        <button id="dialogNewGameBtn" type="button">New Game</button>
+        <button id="dialogCloseBtn" type="button">Close</button>
+      </div>
+    </dialog>
+
+    <dialog id="puzzleDialog" class="puzzle-dialog" aria-labelledby="puzzleDialogTitle">
+      <div class="game-over-head">
+        <span class="game-over-badge">Solved</span>
+        <h2 id="puzzleDialogTitle">Puzzle complete</h2>
+        <p id="puzzleDialogText">Correct. Nice tactic.</p>
+        <p id="puzzleDialogSummary" class="puzzle-dialog-summary">Theme · Difficulty · Line</p>
+      </div>
+      <div class="dialog-actions puzzle-actions">
+        <button id="puzzleNextDialogBtn" type="button">Next Puzzle</button>
+        <button id="puzzleRetryDialogBtn" type="button">Retry Puzzle</button>
+        <button id="puzzleHomeDialogBtn" type="button">Return Home</button>
+      </div>
+    </dialog>
+
+    <script type="module" src="./src/app.js?v=api-netlify-2"></script>
+  </body>
+</html>
