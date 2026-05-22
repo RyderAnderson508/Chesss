@@ -43,7 +43,15 @@ const blockedTerms = [
 ];
 
 let blobStorePromise = null;
-let data = await loadData();
+let data = null;
+let dataLoadPromise = null;
+
+async function ensureDataLoaded() {
+  if (data) return data;
+  if (!dataLoadPromise) dataLoadPromise = loadData();
+  data = await dataLoadPromise;
+  return data;
+}
 
 async function getBlobStore() {
   if (!process.env.NETLIFY) return null;
@@ -299,6 +307,8 @@ function makeRoomCode() {
 }
 
 export async function handleRequest(request, response) {
+  await ensureDataLoaded();
+
   if (request.method === "OPTIONS") {
     sendJson(response, 200, { ok: true });
     return;
