@@ -3277,13 +3277,18 @@ function getApiBase() {
   const saved = window.localStorage.getItem(settingKeys.apiBase);
   const host = window.location.hostname;
   const isLocalHost = host === "localhost" || host === "127.0.0.1" || host === "::1";
+  const isPrivateLanHost =
+    /^10\./.test(host) ||
+    /^192\.168\./.test(host) ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
+    host.endsWith(".local");
   if (saved !== null) {
     const trimmed = saved.trim();
     const savedIsLocal = /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i.test(trimmed);
     const savedLocalPort = savedIsLocal ? new URL(trimmed).port : "";
-    if (!trimmed && isLocalHost) {
+    if (!trimmed && (isLocalHost || isPrivateLanHost)) {
       window.localStorage.removeItem(settingKeys.apiBase);
-    } else if (isLocalHost && (trimmed.startsWith("/") || (savedIsLocal && savedLocalPort !== "8787"))) {
+    } else if ((isLocalHost || isPrivateLanHost) && (trimmed.startsWith("/") || (savedIsLocal && savedLocalPort !== "8787"))) {
       window.localStorage.removeItem(settingKeys.apiBase);
     } else if (!isLocalHost && savedIsLocal) {
       window.localStorage.removeItem(settingKeys.apiBase);
@@ -3291,7 +3296,22 @@ function getApiBase() {
       return trimmed;
     }
   }
+  if (isPrivateLanHost) return `${window.location.protocol}//${host}:8787`;
   return isLocalHost ? "http://localhost:8787" : "";
+}
+
+function getLocalApiFallbackBase() {
+  const host = window.location.hostname;
+  if (host === "localhost" || host === "127.0.0.1" || host === "::1") return "http://localhost:8787";
+  if (
+    /^10\./.test(host) ||
+    /^192\.168\./.test(host) ||
+    /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
+    host.endsWith(".local")
+  ) {
+    return `${window.location.protocol}//${host}:8787`;
+  }
+  return "";
 }
 
 function loadSavedUser() {
@@ -3365,10 +3385,10 @@ async function apiRequest(path, options = {}) {
     const target = apiBase || "this site's /api function";
     throw new Error(`Account server is not reachable at ${target}. If this is deployed, check the Netlify function or API base URL.`);
   }
-  const isLocalHost = ["localhost", "127.0.0.1", "::1"].includes(window.location.hostname);
   const contentType = response.headers.get("content-type") || "";
-  if (isLocalHost && !apiBase && !contentType.includes("application/json")) {
-    response = await makeRequest("http://localhost:8787");
+  const fallbackBase = getLocalApiFallbackBase();
+  if (fallbackBase && apiBase !== fallbackBase && (!contentType.includes("application/json") || response.status === 502)) {
+    response = await makeRequest(fallbackBase);
   }
   const body = await response.json().catch(() => ({}));
   if (!response.ok) {
