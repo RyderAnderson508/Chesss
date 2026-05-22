@@ -3273,15 +3273,26 @@ function isOnlineMode() {
   return modeSelect.value === "online";
 }
 
-function getApiBase() {
-  const saved = window.localStorage.getItem(settingKeys.apiBase);
-  const host = window.location.hostname;
-  const isLocalHost = host === "localhost" || host === "127.0.0.1" || host === "::1";
-  const isPrivateLanHost =
+function isLocalPreviewHost(host = window.location.hostname) {
+  return host === "localhost" || host === "127.0.0.1" || host === "::1";
+}
+
+function isPrivateLanPreviewHost(host = window.location.hostname) {
+  return (
     /^10\./.test(host) ||
     /^192\.168\./.test(host) ||
     /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
-    host.endsWith(".local");
+    host.endsWith(".local")
+  );
+}
+
+function getApiBaseCandidates() {
+  const saved = window.localStorage.getItem(settingKeys.apiBase);
+  const host = window.location.hostname;
+  const isLocalHost = isLocalPreviewHost(host);
+  const isPrivateLanHost = isPrivateLanPreviewHost(host);
+  const candidates = [];
+
   if (saved !== null) {
     const trimmed = saved.trim();
     const savedIsLocal = /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i.test(trimmed);
@@ -3293,25 +3304,22 @@ function getApiBase() {
     } else if (!isLocalHost && savedIsLocal) {
       window.localStorage.removeItem(settingKeys.apiBase);
     } else {
-      return trimmed;
+      candidates.push(trimmed);
     }
   }
-  if (isPrivateLanHost) return `${window.location.protocol}//${host}:8787`;
-  return isLocalHost ? "http://localhost:8787" : "";
+
+  if (isLocalHost) {
+    candidates.push("http://localhost:8787", "http://127.0.0.1:8787");
+  } else if (isPrivateLanHost) {
+    candidates.push(`${window.location.protocol}//${host}:8787`);
+  }
+
+  candidates.push("");
+  return [...new Set(candidates)];
 }
 
-function getLocalApiFallbackBase() {
-  const host = window.location.hostname;
-  if (host === "localhost" || host === "127.0.0.1" || host === "::1") return "http://localhost:8787";
-  if (
-    /^10\./.test(host) ||
-    /^192\.168\./.test(host) ||
-    /^172\.(1[6-9]|2\d|3[01])\./.test(host) ||
-    host.endsWith(".local")
-  ) {
-    return `${window.location.protocol}//${host}:8787`;
-  }
-  return "";
+function getApiBase() {
+  return getApiBaseCandidates()[0] ?? "";
 }
 
 function loadSavedUser() {
@@ -3368,8 +3376,6 @@ function clearAccountSession() {
 }
 
 async function apiRequest(path, options = {}) {
-  let response;
-  const apiBase = getApiBase();
   const makeRequest = (base) =>
     fetch(`${base}${path}`, {
       ...options,
@@ -3379,24 +3385,35 @@ async function apiRequest(path, options = {}) {
         ...(options.headers ?? {}),
       },
     });
-  try {
-    response = await makeRequest(apiBase);
-  } catch {
+
+  let lastError = null;
+  for (const apiBase of getApiBaseCandidates()) {
     const target = apiBase || "this site's /api function";
-    throw new Error(`Account server is not reachable at ${target}. If this is deployed, check the Netlify function or API base URL.`);
-  }
-  const contentType = response.headers.get("content-type") || "";
-  const fallbackBase = getLocalApiFallbackBase();
-  if (fallbackBase && apiBase !== fallbackBase && (!contentType.includes("application/json") || response.status === 502)) {
-    response = await makeRequest(fallbackBase);
-  }
-  const body = await response.json().catch(() => ({}));
-  if (!response.ok) {
+    let response;
+    try {
+      response = await makeRequest(apiBase);
+    } catch {
+      lastError = new Error(`Account server is not reachable at ${target}.`);
+      continue;
+    }
+
+    const contentType = response.headers.get("content-type") || "";
+    const isJson = contentType.includes("application/json");
+    const body = isJson ? await response.json().catch(() => ({})) : {};
+    if (response.ok && isJson) return body;
+
+    const shouldTryNextEndpoint = response.status === 502 || !isJson;
+    if (shouldTryNextEndpoint) {
+      lastError = new Error(body.error || `Account server returned ${response.status} at ${target}.`);
+      continue;
+    }
+
     const error = new Error(body.error || `Server request failed (${response.status}).`);
     Object.assign(error, body);
     throw error;
   }
-  return body;
+
+  throw lastError || new Error("Account server is not reachable.");
 }
 
 async function loginAccount(source = "panel") {
