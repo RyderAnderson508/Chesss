@@ -3280,7 +3280,10 @@ function getApiBase() {
   if (saved !== null) {
     const trimmed = saved.trim();
     const savedIsLocal = /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/i.test(trimmed);
+    const savedLocalPort = savedIsLocal ? new URL(trimmed).port : "";
     if (!trimmed && isLocalHost) {
+      window.localStorage.removeItem(settingKeys.apiBase);
+    } else if (isLocalHost && (trimmed.startsWith("/") || (savedIsLocal && savedLocalPort !== "8787"))) {
       window.localStorage.removeItem(settingKeys.apiBase);
     } else if (!isLocalHost && savedIsLocal) {
       window.localStorage.removeItem(settingKeys.apiBase);
